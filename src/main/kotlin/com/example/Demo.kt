@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.scenarios.dirtyReadScenario
 import com.example.scenarios.lostUpdateScenario
 import com.example.util.Helper
 import com.example.util.Report
@@ -49,11 +50,16 @@ fun runDemo(helper: Helper) = with(helper) {
     )
 
     Report.h2("[Lost update scenario](LOST_UPDATE.md)")
+    Report.h2("[Dirty read scenario](DIRTY_READ.md)")
     Report.writeToFile("REPORT.md")
 
     Report.clear()
     lostUpdateScenario(helper)
     Report.writeToFile("LOST_UPDATE.md")
+
+    Report.clear()
+    dirtyReadScenario(helper)
+    Report.writeToFile("DIRTY_READ.md")
 }
 
 @ApplicationScoped
