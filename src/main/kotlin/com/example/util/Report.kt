@@ -1,4 +1,4 @@
-package com.example
+package com.example.util
 
 import java.io.File
 
@@ -43,17 +43,17 @@ object Report {
 
     @Synchronized
     fun sql(sql: List<String>, actor: String) {
-        sql(sql, actor, "")
+        sql(sql, actor, null)
     }
 
     @Synchronized
-    fun sql(sql: List<String>, actor: String, result: String) {
+    fun sql(sql: List<String>, actor: String, result: String?) {
         var block = "```sql\n"
         if (actor.isNotBlank()) {
             block += "-- $actor:\n"
         }
         block += sql.joinToString("\n")
-        if (result.isNotBlank()) {
+        if (result?.isNotBlank() == true) {
             block += "\n-- Result: $result"
         }
         block += "\n```"
@@ -67,5 +67,9 @@ object Report {
         val file = File(fileName)
         file.writeText(data)
         println("Wrote report to $currentDir/$fileName")
+    }
+
+    fun clear() {
+        data = ""
     }
 }

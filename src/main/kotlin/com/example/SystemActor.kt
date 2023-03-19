@@ -1,5 +1,9 @@
 package com.example
 
+import com.example.util.ConnectionPool
+import com.example.util.Database
+import com.example.util.Report
+
 data class SystemActor(
     private val name: String,
     private val connectionPool: ConnectionPool,

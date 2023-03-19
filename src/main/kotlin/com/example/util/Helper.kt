@@ -1,16 +1,11 @@
-package com.example
+package com.example.util
 
-import com.example.config.AppConfig
 import io.quarkus.runtime.Startup
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 @Startup
-class Helper(
-    private val config: AppConfig,
-//    private val connectionPool: ConnectionPool,
-//    private val database: Database,
-) {
+class Helper(config: AppConfig) {
     internal val mysqlConnectionPool = ConnectionPool(
         config.mysql().jdbcUrl(),
         config.mysql().username(),

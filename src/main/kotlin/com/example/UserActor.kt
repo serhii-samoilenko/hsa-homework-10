@@ -1,9 +1,14 @@
 package com.example
 
+import com.example.util.ConnectionPool
+import com.example.util.Database
+import com.example.util.Report
 import java.sql.Connection
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import kotlin.time.Duration
 
 data class UserActor(
     private val name: String,
@@ -18,15 +23,26 @@ data class UserActor(
             throw IllegalStateException("Already started connection")
         }
         connection = connectionPool.connection().apply { autoCommit = false }
+        Report.code("$name: began transaction")
     }
 
     fun execute(vararg sql: String) {
-        val duration = Database.execute(checkConnection(), *sql)
-        Report.sql(sql.toList(), name)
+        var error: Exception? = null
+        val statements = mutableListOf<String>()
+        try {
+            sql.forEach {
+                statements.add(it)
+                Database.execute(checkConnection(), it)
+            }
+        } catch (e: Exception) {
+            error = e
+        }
+        Report.sql(statements, name, error?.message)
     }
 
-    fun executeAsync(vararg sql: String) {
-        futures.add(executor.submit { execute(*sql) })
+    fun schedule(operation: (UserActor) -> Unit): Waiter {
+        futures.add(executor.submit { operation(this) })
+        return Waiter(name, futures)
     }
 
     fun tryExecute(sql: String) {
@@ -44,16 +60,9 @@ data class UserActor(
         with(checkConnection()) {
             commit()
             close()
+            Report.code("$name: committed")
         }
         connection = null
-    }
-
-    fun commitAsync(also: () -> Unit) {
-        val future = executor.submit {
-            commit()
-            also()
-        }
-        futures.add(future)
     }
 
     fun rollback() {
@@ -64,7 +73,7 @@ data class UserActor(
         connection = null
     }
 
-    fun await() {
+    fun awaitCompletion() {
         futures.forEach { it.get() }
         futures.clear()
     }
@@ -74,5 +83,21 @@ data class UserActor(
             throw IllegalStateException("Connection not started")
         }
         return connection!!
+    }
+
+    class Waiter(private val agentName: String, private val futures: List<Future<*>>) {
+        fun tryAwait(timeout: String = "1s") {
+            val duration = Duration.parse(timeout).inWholeMilliseconds
+            // Wait for all futures to complete, return nothing on timeout
+            val now = System.currentTimeMillis()
+            val end = now + duration
+            while (System.currentTimeMillis() < end) {
+                if (futures.all { it.isDone || it.isCancelled }) {
+                    return
+                }
+                MILLISECONDS.sleep(10)
+            }
+            Report.code("$agentName: not finished after $timeout")
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.config
+package com.example.util
 
 import io.smallrye.config.ConfigMapping
 import io.smallrye.config.WithName
