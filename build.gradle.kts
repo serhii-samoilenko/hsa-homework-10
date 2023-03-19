@@ -19,7 +19,13 @@ dependencies {
     implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-arc")
+
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("mysql:mysql-connector-java:8.0.32")
+    implementation("org.postgresql:postgresql:42.3.8")
+
     testImplementation("io.quarkus:quarkus-junit5")
 }
 
