@@ -190,14 +190,14 @@ SELECT amount FROM accounts WHERE name = 'Charlie'
 
 Alice will commit
 
-`Alice: committed`
-
----
-
 ```sql
 -- Bob:
 UPDATE accounts SET amount = 40 WHERE name = 'Charlie'
 ```
+
+`Alice: committed`
+
+---
 
 `Bob: committed`
 

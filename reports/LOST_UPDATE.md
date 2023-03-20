@@ -363,12 +363,12 @@ SELECT amount FROM accounts WHERE name = 'Alice'
 
 Alice will commit
 
+`Alice: committed`
+
 ```sql
 -- Bob:
 UPDATE accounts SET amount = 20 WHERE name = 'Alice'
 ```
-
-`Alice: committed`
 
 Bob will commit
 

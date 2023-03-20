@@ -73,100 +73,100 @@ Lost update doesn't happen because the DB detects the concurrent update by the s
 
 #### MySQL with `READ UNCOMMITTED`:
 
-TODO
+Dirty read happens because the second transaction has access to uncommitted changes of the first one.
 
 #### PostgreSQL with `READ UNCOMMITTED`:
 
-TODO
+Dirty read doesn't happen because PostgreSQL doesn't have dirty read capability.
 
 #### MySQL with `READ COMMITTED`:
 
-TODO
+Dirty read doesn't happen on this isolation level.
 
 #### PostgreSQL with `READ COMMITTED`:
 
-TODO
+Same as in `READ UNCOMMITTED` scenario.
 
 #### MySQL with `REPEATABLE READ`:
 
-TODO
+Dirty read doesn't happen on this isolation level.
 
 #### PostgreSQL with `REPEATABLE READ`:
 
-TODO
+Same as in previous PostgreSQL scenarios.
 
 #### MySQL with `SERIALIZABLE`:
 
-TODO
+Dirty read doesn't happen, the second transaction is blocked until the first one commits.
 
 #### PostgreSQL with `SERIALIZABLE`:
 
-TODO
+Same as in previous PostgreSQL scenarios.
 
 ### [Non-repeatable read scenario](NON_REPEATABLE_READ.md)
 
 #### MySQL with `READ UNCOMMITTED`:
 
-TODO
+The first transaction will have non-repeatable read when the second transaction updates the row between the first transaction's SELECTs.
 
 #### PostgreSQL with `READ UNCOMMITTED`:
 
-TODO
+The first transaction will have non-repeatable read, same as MySQL behavior in the scenario above.
 
 #### MySQL with `READ COMMITTED`:
 
-TODO
+The first transaction will have non-repeatable read as in `READ UNCOMMITTED` scenario.
 
 #### PostgreSQL with `READ COMMITTED`:
 
-TODO
+The first transaction will have non-repeatable read, same as MySQL behavior in the scenario above.
 
 #### MySQL with `REPEATABLE READ`:
 
-TODO
+The first transaction will have repeatable reads, and the second transaction's write won't be blocked.
 
 #### PostgreSQL with `REPEATABLE READ`:
 
-TODO
+The first transaction will have repeatable read behavior same as MySQL.
 
 #### MySQL with `SERIALIZABLE`:
 
-TODO
+The first transaction will have repeatable reads, and the second transaction will be blocked until the first one commits.
 
 #### PostgreSQL with `SERIALIZABLE`:
 
-TODO
+The first transaction will have repeatable reads, and the second transaction won't be blocked with its write.
 
 ### [Phantom read scenario](PHANTOM_READ.md)
 
 #### MySQL with `READ UNCOMMITTED`:
 
-TODO
+Phantom read happens, the first transaction sees results added by the second transaction between the first transaction's SELECTs.
 
 #### PostgreSQL with `READ UNCOMMITTED`:
 
-TODO
+Phantom read happens, same as in MySQL `READ UNCOMMITTED` scenario.
 
 #### MySQL with `READ COMMITTED`:
 
-TODO
+Phantom read happens, same as in `READ UNCOMMITTED` scenario.
 
 #### PostgreSQL with `READ COMMITTED`:
 
-TODO
+Phantom read happens, same as in scenarios above.
 
 #### MySQL with `REPEATABLE READ`:
 
-TODO
+Phantom read doesn't happen, the second transaction's write is not visible to the first transaction.
 
 #### PostgreSQL with `REPEATABLE READ`:
 
-TODO
+Phantom read doesn't happen, same as in MySQL `REPEATABLE READ` scenario above.
 
 #### MySQL with `SERIALIZABLE`:
 
-TODO
+Phantom read doesn't happen, the second transaction is blocked until the first one commits.
 
 #### PostgreSQL with `SERIALIZABLE`:
 
-TODO
+Phantom read doesn't happen, and the second transaction is not blocked.
