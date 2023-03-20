@@ -13,6 +13,7 @@ import kotlin.time.Duration
 data class UserActor(
     private val name: String,
     private val connectionPool: ConnectionPool,
+    val report: Report,
 ) {
     private var connection: Connection? = null
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -23,7 +24,7 @@ data class UserActor(
             throw IllegalStateException("Already started connection")
         }
         connection = connectionPool.connection().apply { autoCommit = false }
-        Report.code("$name: began transaction")
+        report.code("$name: began transaction")
     }
 
     fun execute(vararg sql: String) {
@@ -37,22 +38,22 @@ data class UserActor(
         } catch (e: Exception) {
             error = e
         }
-        Report.sql(statements, name, error?.message)
+        report.sql(statements, name, error?.message)
     }
 
     fun schedule(operation: (UserActor) -> Unit): Waiter {
         futures.add(executor.submit { operation(this) })
-        return Waiter(name, futures)
+        return Waiter(futures.toList())
     }
 
     fun tryExecute(sql: String) {
         val duration = Database.tryExecute(checkConnection(), sql)
-        Report.sql(listOf(sql), "Trying - $name", duration.toString())
+        report.sql(listOf(sql), "Trying - $name", duration.toString())
     }
 
     fun querySingleValue(sql: String): Any {
         val value = Database.querySingleValue(checkConnection(), sql)
-        Report.sql(listOf(sql), name, value.toString())
+        report.sql(listOf(sql), name, value.toString())
         return value
     }
 
@@ -60,7 +61,7 @@ data class UserActor(
         with(checkConnection()) {
             commit()
             close()
-            Report.code("$name: committed")
+            report.code("$name: committed")
         }
         connection = null
     }
@@ -85,7 +86,7 @@ data class UserActor(
         return connection!!
     }
 
-    class Waiter(private val agentName: String, private val futures: List<Future<*>>) {
+    inner class Waiter(private val futures: List<Future<*>>) {
         fun tryAwait(timeout: String = "1s") {
             val duration = Duration.parse(timeout).inWholeMilliseconds
             // Wait for all futures to complete, return nothing on timeout
@@ -97,7 +98,7 @@ data class UserActor(
                 }
                 MILLISECONDS.sleep(10)
             }
-            Report.code("$agentName: not finished after $timeout")
+            report.code("$name: not finished after $timeout")
         }
     }
 }

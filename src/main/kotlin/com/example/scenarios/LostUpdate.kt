@@ -4,16 +4,14 @@ import com.example.SystemActor
 import com.example.UserActor
 import com.example.util.ConnectionPool
 import com.example.util.Helper
-import com.example.util.Report.h2
-import com.example.util.Report.h3
-import com.example.util.Report.text
+import com.example.util.Report
 
-fun lostUpdateScenario(helper: Helper) = with(helper) {
+fun lostUpdateScenario(helper: Helper, r: Report) = with(helper) {
     val databases = listOf("MySQL" to mysqlConnectionPool, "Postgres" to postgresConnectionPool)
     val isolationLevels = listOf("READ UNCOMMITTED", "READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE")
 
-    h2("Lost update")
-    text(
+    r.h2("Lost update")
+    r.text(
         """
         We will use two transactions to update the same row in the database.
         The first transaction will read the value of the row, increment it by 1 and write it back.
@@ -26,39 +24,42 @@ fun lostUpdateScenario(helper: Helper) = with(helper) {
     )
 
     val scenario = fun(db: String, pool: ConnectionPool, level: String) {
-        h3("$db with $level:")
+        r.h3("$db with $level:")
 
-        val alice = UserActor("Alice", pool)
-        val bob = UserActor("Bob", pool)
-        val system = SystemActor("System", pool)
+        val alice = UserActor("Alice", pool, r)
+        val bob = UserActor("Bob", pool, r)
+        val system = SystemActor("System", pool, r)
 
         alice.begin()
         bob.begin()
         bob.execute("SET TRANSACTION ISOLATION LEVEL $level")
 
-        text("Alice will select the value of the row and increment it")
+        r.line()
+        r.text("Alice will select the value of the row and increment it")
         alice.schedule {
             val aliceValue = it.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
             it.execute("UPDATE persons SET age = ${aliceValue + 1} WHERE name = 'Alice'")
         }.tryAwait()
 
-        text("Bob will select the value of the row and increment it")
+        r.text("Bob will select the value of the row and increment it")
         bob.schedule {
             val bobValue = it.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
             it.execute("UPDATE persons SET age = ${bobValue + 2} WHERE name = 'Alice'")
         }.tryAwait()
+        r.line()
 
-        text("Alice will commit")
+        r.text("Alice will commit")
         alice.schedule { it.commit() }.tryAwait()
-        text("Bob will commit")
+        r.text("Bob will commit")
         bob.schedule { it.commit() }
 
         alice.awaitCompletion()
         bob.awaitCompletion()
+        r.line()
 
-        text("The value of the row is now:")
+        r.text("The value of the row is now:")
         val value = system.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
-        text("Value: `$value`")
+        r.text("Value: `$value`")
     }
 
     databases.forEach { (name, pool) ->

@@ -4,8 +4,6 @@ import com.example.scenarios.dirtyReadScenario
 import com.example.scenarios.lostUpdateScenario
 import com.example.util.Helper
 import com.example.util.Report
-import com.example.util.Report.h1
-import com.example.util.Report.text
 import javax.enterprise.context.ApplicationScoped
 
 /**
@@ -20,11 +18,12 @@ import javax.enterprise.context.ApplicationScoped
  * - phantom read
  */
 fun runDemo(helper: Helper) = with(helper) {
-    h1("Isolations & locks demo report")
-    val mysql = SystemActor("mysql", mysqlConnectionPool)
-    val postgres = SystemActor("postgres", postgresConnectionPool)
-    text("Creating tables and inserting data")
-    text("In MySQL:")
+    val r = Report("REPORT.md")
+    r.h1("Isolations & locks demo report")
+    val mysql = SystemActor("mysql", mysqlConnectionPool, r)
+    val postgres = SystemActor("postgres", postgresConnectionPool, r)
+    r.text("Creating tables and inserting data")
+    r.text("In MySQL:")
     mysql.execute(
         """
             CREATE TABLE IF NOT EXISTS persons (
@@ -36,7 +35,7 @@ fun runDemo(helper: Helper) = with(helper) {
         "TRUNCATE TABLE persons",
         "INSERT INTO persons (name, age) VALUES ('Alice', 20), ('Bob', 20), ('Charlie', 20)",
     )
-    text("In PostgreSQL:")
+    r.text("In PostgreSQL:")
     postgres.execute(
         """
             CREATE TABLE IF NOT EXISTS persons (
@@ -49,17 +48,17 @@ fun runDemo(helper: Helper) = with(helper) {
         "INSERT INTO persons (name, age) VALUES ('Alice', 20), ('Bob', 20), ('Charlie', 20)",
     )
 
-    Report.h2("[Lost update scenario](LOST_UPDATE.md)")
-    Report.h2("[Dirty read scenario](DIRTY_READ.md)")
-    Report.writeToFile("REPORT.md")
+    r.h2("[Lost update scenario](LOST_UPDATE.md)")
+    r.h2("[Dirty read scenario](DIRTY_READ.md)")
+    r.writeToFile()
 
-    Report.clear()
-    lostUpdateScenario(helper)
-    Report.writeToFile("LOST_UPDATE.md")
+    var scenarioReport = Report("LOST_UPDATE.md")
+    lostUpdateScenario(helper, scenarioReport)
+    scenarioReport.writeToFile()
 
-    Report.clear()
-    dirtyReadScenario(helper)
-    Report.writeToFile("DIRTY_READ.md")
+    scenarioReport = Report("DIRTY_READ.md")
+    dirtyReadScenario(helper, scenarioReport)
+    scenarioReport.writeToFile()
 }
 
 @ApplicationScoped

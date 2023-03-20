@@ -2,7 +2,9 @@ package com.example.util
 
 import java.io.File
 
-object Report {
+class Report(
+    private val fileName: String,
+) {
     private var data: String = ""
 
     @Synchronized
@@ -10,43 +12,39 @@ object Report {
         "$text\n".also { data += it + "\n" }.also { println(it) }
     }
 
-    @Synchronized
     fun h1(text: String) {
         text("# $text")
     }
 
-    @Synchronized
     fun h2(text: String) {
         text("## $text")
     }
 
-    @Synchronized
     fun h3(text: String) {
         text("### $text")
     }
 
-    @Synchronized
     fun code(text: String) {
         text("`$text`")
     }
 
-    @Synchronized
+    fun line() {
+        text("---")
+    }
+
     fun sql(sql: String) {
         sql(listOf(sql))
     }
 
-    @Synchronized
     fun sql(sql: List<String>) {
         val block = "```sql\n${sql.joinToString("\n")}\n```"
         text(block)
     }
 
-    @Synchronized
     fun sql(sql: List<String>, actor: String) {
         sql(sql, actor, null)
     }
 
-    @Synchronized
     fun sql(sql: List<String>, actor: String, result: String?) {
         var block = "```sql\n"
         if (actor.isNotBlank()) {
@@ -61,7 +59,7 @@ object Report {
     }
 
     @Synchronized
-    fun writeToFile(fileName: String) {
+    fun writeToFile() {
         // Get current directory
         val currentDir = File("").absolutePath
         val file = File(fileName)
@@ -69,6 +67,7 @@ object Report {
         println("Wrote report to $currentDir/$fileName")
     }
 
+    @Synchronized
     fun clear() {
         data = ""
     }
