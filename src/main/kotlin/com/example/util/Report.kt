@@ -25,6 +25,10 @@ class Report(
         text("### $text")
     }
 
+    fun h4(text: String) {
+        text("#### $text")
+    }
+
     fun code(text: String) {
         text("`$text`")
     }
@@ -38,7 +42,7 @@ class Report(
     }
 
     fun sql(sql: List<String>) {
-        val block = "```sql\n${sql.joinToString("\n")}\n```"
+        val block = "```sql\n${sql.joinToString(";\n")}\n```"
         text(block)
     }
 
@@ -51,7 +55,7 @@ class Report(
         if (actor.isNotBlank()) {
             block += "-- $actor:\n"
         }
-        block += sql.joinToString("\n")
+        block += sql.joinToString(";\n")
         if (result?.isNotBlank() == true) {
             block += "\n-- Result: $result"
         }
@@ -61,11 +65,9 @@ class Report(
 
     @Synchronized
     fun writeToFile() {
-        // Get current directory
-        val currentDir = File("").absolutePath
-        val file = File(fileName)
+        val file = File(targetDir, fileName)
         file.writeText(data)
-        println("Wrote report to $currentDir/$targetDir/$fileName")
+        println("Wrote report to ${file.absolutePath}")
     }
 
     @Synchronized

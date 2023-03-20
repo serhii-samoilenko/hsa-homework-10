@@ -21,7 +21,7 @@ SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -84,7 +84,7 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -147,7 +147,7 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -155,7 +155,10 @@ SELECT amount FROM accounts WHERE name = 'Alice'
 -- Result: 21
 ```
 
-`Alice: not finished after 1s`
+```sql
+-- Alice:
+UPDATE accounts SET amount = 22 WHERE name = 'Alice'
+```
 
 Bob will select the value of the row and increment it
 
@@ -165,27 +168,22 @@ SELECT amount FROM accounts WHERE name = 'Alice'
 -- Result: 21
 ```
 
-```sql
--- Bob:
-UPDATE accounts SET amount = 31 WHERE name = 'Alice'
-```
+`Bob: not finished after 1s`
 
 ---
 
 Alice will commit
 
-`Alice: not finished after 1s`
+```sql
+-- Bob:
+UPDATE accounts SET amount = 31 WHERE name = 'Alice'
+```
+
+`Alice: committed`
 
 Bob will commit
 
-```sql
--- Alice:
-UPDATE accounts SET amount = 22 WHERE name = 'Alice'
-```
-
 `Bob: committed`
-
-`Alice: committed`
 
 ---
 
@@ -194,10 +192,10 @@ The value of the row is now:
 ```sql
 -- System:
 SELECT amount FROM accounts WHERE name = 'Alice'
--- Result: 22
+-- Result: 31
 ```
 
-Value: `22`
+Value: `31`
 
 ### MySQL with SERIALIZABLE:
 
@@ -212,17 +210,17 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
 SELECT amount FROM accounts WHERE name = 'Alice'
--- Result: 22
+-- Result: 31
 ```
 
 ```sql
 -- Alice:
-UPDATE accounts SET amount = 23 WHERE name = 'Alice'
+UPDATE accounts SET amount = 32 WHERE name = 'Alice'
 ```
 
 Bob will select the value of the row and increment it
@@ -236,14 +234,14 @@ Alice will commit
 ```sql
 -- Bob:
 SELECT amount FROM accounts WHERE name = 'Alice'
--- Result: 23
+-- Result: 32
 ```
 
 `Alice: committed`
 
 ```sql
 -- Bob:
-UPDATE accounts SET amount = 33 WHERE name = 'Alice'
+UPDATE accounts SET amount = 42 WHERE name = 'Alice'
 ```
 
 Bob will commit
@@ -257,10 +255,10 @@ The value of the row is now:
 ```sql
 -- System:
 SELECT amount FROM accounts WHERE name = 'Alice'
--- Result: 33
+-- Result: 42
 ```
 
-Value: `33`
+Value: `42`
 
 ### Postgres with READ UNCOMMITTED:
 
@@ -275,7 +273,7 @@ SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -338,7 +336,7 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -401,7 +399,7 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:
@@ -430,13 +428,13 @@ Alice will commit
 
 `Alice: committed`
 
-Bob will commit
-
 ```sql
 -- Bob:
 UPDATE accounts SET amount = 30 WHERE name = 'Alice'
 -- Result: ERROR: could not serialize access due to concurrent update
 ```
+
+Bob will commit
 
 `Bob: committed`
 
@@ -465,7 +463,7 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 
 ---
 
-Alice will select the value of the row and increment it
+Alice will select the value of the row and then increment it
 
 ```sql
 -- Alice:

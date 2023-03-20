@@ -44,7 +44,7 @@ fun phantomReadScenario(helper: Helper, r: Report) = with(helper) {
 
         r.line()
         r.text("Bob will insert a new row matching the criteria and commit")
-        val newName = "User-" + Random.nextInt(100, 999)
+        val newName = "User"
         bob.begin()
         bob.schedule {
             it.execute("INSERT INTO accounts (name, amount) VALUES ('$newName', 100)")

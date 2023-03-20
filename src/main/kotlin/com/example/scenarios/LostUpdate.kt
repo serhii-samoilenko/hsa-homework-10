@@ -35,9 +35,9 @@ fun lostUpdateScenario(helper: Helper, r: Report) = with(helper) {
         bob.execute("SET TRANSACTION ISOLATION LEVEL $level")
 
         r.line()
-        r.text("Alice will select the value of the row and increment it")
+        r.text("Alice will select the value of the row and then increment it")
+        val aliceValue = alice.querySingleValue("SELECT amount FROM accounts WHERE name = 'Alice'") as Int
         alice.schedule {
-            val aliceValue = it.querySingleValue("SELECT amount FROM accounts WHERE name = 'Alice'") as Int
             it.execute("UPDATE accounts SET amount = ${aliceValue + 1} WHERE name = 'Alice'")
         }.tryAwait()
 

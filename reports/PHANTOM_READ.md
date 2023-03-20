@@ -17,7 +17,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 12ms
+-- Result: 11ms
 ```
 
 `Alice: began transaction`
@@ -43,7 +43,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-858', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-158', 100)
 ```
 
 `Bob: committed`
@@ -55,7 +55,7 @@ Alice will AGAIN perform a query
 ```sql
 -- Alice:
 SELECT name FROM accounts WHERE amount >= 100
--- Result: [Dave, User-858]
+-- Result: [Dave, User-158]
 ```
 
 Alice will commit
@@ -66,11 +66,11 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-858'
--- Result: 28ms
+DELETE FROM accounts WHERE name = 'User-158'
+-- Result: 9ms
 ```
 
-Values: `[Dave, User-858]`
+Values: `[Dave, User-158]`
 
 ### MySQL with READ COMMITTED:
 
@@ -105,7 +105,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-253', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-658', 100)
 ```
 
 `Bob: committed`
@@ -117,7 +117,7 @@ Alice will AGAIN perform a query
 ```sql
 -- Alice:
 SELECT name FROM accounts WHERE amount >= 100
--- Result: [Dave, User-253]
+-- Result: [Dave, User-658]
 ```
 
 Alice will commit
@@ -128,11 +128,11 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-253'
--- Result: 7ms
+DELETE FROM accounts WHERE name = 'User-658'
+-- Result: 10ms
 ```
 
-Values: `[Dave, User-253]`
+Values: `[Dave, User-658]`
 
 ### MySQL with REPEATABLE READ:
 
@@ -167,7 +167,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-129', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-734', 100)
 ```
 
 `Bob: committed`
@@ -190,8 +190,8 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-129'
--- Result: 7ms
+DELETE FROM accounts WHERE name = 'User-734'
+-- Result: 12ms
 ```
 
 Values: `[Dave]`
@@ -203,7 +203,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 2ms
+-- Result: 3ms
 ```
 
 `Alice: began transaction`
@@ -243,7 +243,7 @@ Alice will commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-195', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-336', 100)
 ```
 
 `Alice: committed`
@@ -254,8 +254,8 @@ INSERT INTO accounts (name, amount) VALUES ('User-195', 100)
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-195'
--- Result: 5ms
+DELETE FROM accounts WHERE name = 'User-336'
+-- Result: 4ms
 ```
 
 Values: `[Dave]`
@@ -267,7 +267,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 6ms
+-- Result: 2ms
 ```
 
 `Alice: began transaction`
@@ -293,7 +293,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-174', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-331', 100)
 ```
 
 `Bob: committed`
@@ -305,7 +305,7 @@ Alice will AGAIN perform a query
 ```sql
 -- Alice:
 SELECT name FROM accounts WHERE amount >= 100
--- Result: [Dave, User-174]
+-- Result: [Dave, User-331]
 ```
 
 Alice will commit
@@ -316,11 +316,11 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-174'
+DELETE FROM accounts WHERE name = 'User-331'
 -- Result: 2ms
 ```
 
-Values: `[Dave, User-174]`
+Values: `[Dave, User-331]`
 
 ### Postgres with READ COMMITTED:
 
@@ -329,7 +329,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 3ms
+-- Result: 2ms
 ```
 
 `Alice: began transaction`
@@ -355,7 +355,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-678', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-554', 100)
 ```
 
 `Bob: committed`
@@ -367,7 +367,7 @@ Alice will AGAIN perform a query
 ```sql
 -- Alice:
 SELECT name FROM accounts WHERE amount >= 100
--- Result: [Dave, User-678]
+-- Result: [Dave, User-554]
 ```
 
 Alice will commit
@@ -378,11 +378,11 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-678'
--- Result: 2ms
+DELETE FROM accounts WHERE name = 'User-554'
+-- Result: 3ms
 ```
 
-Values: `[Dave, User-678]`
+Values: `[Dave, User-554]`
 
 ### Postgres with REPEATABLE READ:
 
@@ -391,7 +391,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 3ms
+-- Result: 2ms
 ```
 
 `Alice: began transaction`
@@ -417,7 +417,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-220', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-182', 100)
 ```
 
 `Bob: committed`
@@ -440,7 +440,7 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-220'
+DELETE FROM accounts WHERE name = 'User-182'
 -- Result: 2ms
 ```
 
@@ -453,7 +453,7 @@ System will make one row match the criteria
 ```sql
 -- System:
 Update accounts set amount = 100 where name = 'Dave'
--- Result: 3ms
+-- Result: 2ms
 ```
 
 `Alice: began transaction`
@@ -479,7 +479,7 @@ Bob will insert a new row matching the criteria and commit
 
 ```sql
 -- Bob:
-INSERT INTO accounts (name, amount) VALUES ('User-231', 100)
+INSERT INTO accounts (name, amount) VALUES ('User-400', 100)
 ```
 
 `Bob: committed`
@@ -502,8 +502,8 @@ Alice will commit
 
 ```sql
 -- System:
-DELETE FROM accounts WHERE name = 'User-231'
--- Result: 3ms
+DELETE FROM accounts WHERE name = 'User-400'
+-- Result: 2ms
 ```
 
 Values: `[Dave]`

@@ -51,9 +51,13 @@ fun runDemo(helper: Helper) = with(helper) {
     )
 
     r.h3("[Lost update scenario](LOST_UPDATE.md)")
+    r.todo()
     r.h3("[Dirty read scenario](DIRTY_READ.md)")
+    r.todo()
     r.h3("[Non-repeatable read scenario](NON_REPEATABLE_READ.md)")
+    r.todo()
     r.h3("[Phantom read scenario](PHANTOM_READ.md)")
+    r.todo()
     r.writeToFile()
 
     var scenarioReport = Report("LOST_UPDATE.md")
@@ -78,4 +82,23 @@ class Demo(private val helper: Helper) {
     fun start() {
         runDemo(helper)
     }
+}
+
+private fun Report.todo() {
+    h4("MySQL with `READ UNCOMMITTED`:")
+    text("TODO")
+    h4("PostgreSQL with `READ UNCOMMITTED`:")
+    text("TODO")
+    h4("MySQL with `READ COMMITTED`:")
+    text("TODO")
+    h4("PostgreSQL with `READ COMMITTED`:")
+    text("TODO")
+    h4("MySQL with `REPEATABLE READ`:")
+    text("TODO")
+    h4("PostgreSQL with `REPEATABLE READ`:")
+    text("TODO")
+    h4("MySQL with `SERIALIZABLE`:")
+    text("TODO")
+    h4("PostgreSQL with `SERIALIZABLE`:")
+    text("TODO")
 }
