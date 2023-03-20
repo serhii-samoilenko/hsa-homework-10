@@ -57,6 +57,12 @@ data class UserActor(
         return value
     }
 
+    fun queryRowValues(sql: String): List<Any> {
+        val value = Database.queryRowValues(checkConnection(), sql).toList()
+        report.sql(listOf(sql), name, value.toString())
+        return value
+    }
+
     fun commit() {
         with(checkConnection()) {
             commit()

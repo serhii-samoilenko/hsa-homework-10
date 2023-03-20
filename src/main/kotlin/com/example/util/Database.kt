@@ -34,4 +34,6 @@ object Database {
     }
 
     fun querySingleValue(connection: Connection, sql: String): Any = query(connection, sql).first().values.first()
+
+    fun queryRowValues(connection: Connection, sql: String): Collection<Any> = query(connection, sql).map { it.values.first() }
 }

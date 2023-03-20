@@ -37,14 +37,14 @@ fun lostUpdateScenario(helper: Helper, r: Report) = with(helper) {
         r.line()
         r.text("Alice will select the value of the row and increment it")
         alice.schedule {
-            val aliceValue = it.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
-            it.execute("UPDATE persons SET age = ${aliceValue + 1} WHERE name = 'Alice'")
+            val aliceValue = it.querySingleValue("SELECT amount FROM accounts WHERE name = 'Alice'") as Int
+            it.execute("UPDATE accounts SET amount = ${aliceValue + 1} WHERE name = 'Alice'")
         }.tryAwait()
 
         r.text("Bob will select the value of the row and increment it")
         bob.schedule {
-            val bobValue = it.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
-            it.execute("UPDATE persons SET age = ${bobValue + 2} WHERE name = 'Alice'")
+            val bobValue = it.querySingleValue("SELECT amount FROM accounts WHERE name = 'Alice'") as Int
+            it.execute("UPDATE accounts SET amount = ${bobValue + 10} WHERE name = 'Alice'")
         }.tryAwait()
         r.line()
 
@@ -58,7 +58,7 @@ fun lostUpdateScenario(helper: Helper, r: Report) = with(helper) {
         r.line()
 
         r.text("The value of the row is now:")
-        val value = system.querySingleValue("SELECT age FROM persons WHERE name = 'Alice'") as Int
+        val value = system.querySingleValue("SELECT amount FROM accounts WHERE name = 'Alice'") as Int
         r.text("Value: `$value`")
     }
 

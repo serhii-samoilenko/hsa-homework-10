@@ -1,56 +1,44 @@
-# hsa10
+# Highload Software Architecture 8 Lesson 10 Homework
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Transactions, Isolations, Locks
+---
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+## Test project setup
 
-## Running the application in dev mode
+The demo is written in Kotlin/Quarkus and uses docker-compose to run MongoDB and PostgreSQL databases.
 
-You can run your application in dev mode that enables live coding using:
+The `com.example.DemoKt.runDemo` function is used to run four scenarios to demonstrate different isolation levels effects in MongoDB and
+PostgreSQL.
+
+Each scenario produces its own report in a Markdown format. The final reports are located in the [reports](reports) folder:
+
+- [`LOST_UPDATE`](reports/LOST_UPDATE.md) scenario produced by [`LostUpdate.kt`](src/main/kotlin/com/example/scenarios/LostUpdate.kt)
+  script.
+- [`DIRTY_READ`](reports/DIRTY_READ.md) scenario produced by [`DirtyRead.kt`](src/main/kotlin/com/example/scenarios/DirtyRead.kt) script.
+- [`NON_REPEATABLE_READ`](reports/NON_REPEATABLE_READ.md) scenario produced
+  by [`NonRepeatableRead.kt`](src/main/kotlin/com/example/scenarios/NonRepeatableRead.kt) script.
+- [`PHANTOM_READ`](reports/PHANTOM_READ.md) scenario produced by [`PhantomRead.kt`](src/main/kotlin/com/example/scenarios/PhantomRead.kt)
+  script.
+
+The summary of the results is located in the [REPORT.md](reports/REPORT.md) file.
+
+## How to build and run
+
+Start up MongoDB and PostgreSQL
+
+```shell script
+docker-compose up -d
+```
+
+Build and run demo application (Requires Java 17+)
+
+```shell script
+./gradlew build && \
+java -jar build/quarkus-app/quarkus-run.jar
+```
+
+You can also run application in dev mode that enables live coding using:
+
 ```shell script
 ./gradlew quarkusDev
 ```
-
-> note
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
-./gradlew build
-```
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/hsa10-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
-
-## Related Guides
-
-- Kotlin ([guide](https://quarkus.io/guides/kotlin)): Write your services in Kotlin
-- JDBC Driver - MySQL ([guide](https://quarkus.io/guides/datasource)): Connect to the MySQL database via JDBC
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC

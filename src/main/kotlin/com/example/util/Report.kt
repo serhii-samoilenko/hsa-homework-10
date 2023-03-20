@@ -5,6 +5,7 @@ import java.io.File
 class Report(
     private val fileName: String,
 ) {
+    private val targetDir = "reports"
     private var data: String = ""
 
     @Synchronized
@@ -64,7 +65,7 @@ class Report(
         val currentDir = File("").absolutePath
         val file = File(fileName)
         file.writeText(data)
-        println("Wrote report to $currentDir/$fileName")
+        println("Wrote report to $currentDir/$targetDir/$fileName")
     }
 
     @Synchronized

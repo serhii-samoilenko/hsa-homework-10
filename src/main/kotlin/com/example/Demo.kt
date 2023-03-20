@@ -2,6 +2,8 @@ package com.example
 
 import com.example.scenarios.dirtyReadScenario
 import com.example.scenarios.lostUpdateScenario
+import com.example.scenarios.nonRepeatableReadScenario
+import com.example.scenarios.phantomReadScenario
 import com.example.util.Helper
 import com.example.util.Report
 import javax.enterprise.context.ApplicationScoped
@@ -26,30 +28,32 @@ fun runDemo(helper: Helper) = with(helper) {
     r.text("In MySQL:")
     mysql.execute(
         """
-            CREATE TABLE IF NOT EXISTS persons (
-                id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255),
-                age  INT
+            CREATE TABLE IF NOT EXISTS accounts (
+                id     INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                name   VARCHAR(255),
+                amount INT
             )
         """.trimIndent(),
-        "TRUNCATE TABLE persons",
-        "INSERT INTO persons (name, age) VALUES ('Alice', 20), ('Bob', 20), ('Charlie', 20)",
+        "TRUNCATE TABLE accounts",
+        "INSERT INTO accounts (name, amount) VALUES ('Alice', 0), ('Bob', 0), ('Charlie', 0), ('Dave', 0), ('Eve', 0), ('Frank', 0)",
     )
     r.text("In PostgreSQL:")
     postgres.execute(
         """
-            CREATE TABLE IF NOT EXISTS persons (
-                id   SERIAL PRIMARY KEY,
-                name VARCHAR(255),
-                age  INT
+            CREATE TABLE IF NOT EXISTS accounts (
+                id     SERIAL PRIMARY KEY,
+                name   VARCHAR(255),
+                amount INT
             )
         """.trimIndent(),
-        "TRUNCATE TABLE persons",
-        "INSERT INTO persons (name, age) VALUES ('Alice', 20), ('Bob', 20), ('Charlie', 20)",
+        "TRUNCATE TABLE accounts",
+        "INSERT INTO accounts (name, amount) VALUES ('Alice', 0), ('Bob', 0), ('Charlie', 0), ('Dave', 0), ('Eve', 0), ('Frank', 0)",
     )
 
-    r.h2("[Lost update scenario](LOST_UPDATE.md)")
-    r.h2("[Dirty read scenario](DIRTY_READ.md)")
+    r.h3("[Lost update scenario](LOST_UPDATE.md)")
+    r.h3("[Dirty read scenario](DIRTY_READ.md)")
+    r.h3("[Non-repeatable read scenario](NON_REPEATABLE_READ.md)")
+    r.h3("[Phantom read scenario](PHANTOM_READ.md)")
     r.writeToFile()
 
     var scenarioReport = Report("LOST_UPDATE.md")
@@ -58,6 +62,14 @@ fun runDemo(helper: Helper) = with(helper) {
 
     scenarioReport = Report("DIRTY_READ.md")
     dirtyReadScenario(helper, scenarioReport)
+    scenarioReport.writeToFile()
+
+    scenarioReport = Report("NON_REPEATABLE_READ.md")
+    nonRepeatableReadScenario(helper, scenarioReport)
+    scenarioReport.writeToFile()
+
+    scenarioReport = Report("PHANTOM_READ.md")
+    phantomReadScenario(helper, scenarioReport)
     scenarioReport.writeToFile()
 }
 
